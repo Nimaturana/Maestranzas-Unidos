@@ -108,8 +108,8 @@ El proyecto se desarrolla utilizando metodología Scrum con las siguientes cerem
 ## Instalación
 
 ```bash
-git clone https://github.com/tu-usuario/maestranzas-inventario.git
-cd maestranzas-inventario
+git clone https://github.com/Nimaturana/Maestranzas-Unidos.git
+cd Maestranzas-Unidos
 ```
 
 ### Configuración de la Base de Datos
@@ -132,12 +132,6 @@ spring.jpa.hibernate.ddl-auto=update
 ```
 
 O ejecuta directamente desde tu IDE abriendo `MaestranzasInventarioApplication.java`
-
-### Acceso a las APIs
-
-```
-http://localhost:8080/api/
-```
 
 ---
 
@@ -177,43 +171,6 @@ Las pruebas de las APIs fueron realizadas con **Postman**, verificando:
 
 ---
 
-## Propuesta de Workflow CI/CD
-
-```yaml
-name: CI Maestranzas Inventario
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Clonar repositorio
-      uses: actions/checkout@v3
-      
-    - name: Configurar Java 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        
-    - name: Ejecutar tests
-      run: mvn test
-      
-    - name: Construir con Maven
-      run: mvn clean install
-      
-    - name: Análisis de código con SonarQube
-      run: mvn sonar:sonar
-```
-
----
-
 ## Factores Clave de Éxito
 
 - ✅ Comprensión profunda de los procesos de la maestranza
@@ -229,11 +186,9 @@ jobs:
 
 ## Equipo de Desarrollo
 
-- **Product Owner**: Representante de Maestranzas Unidos S.A.
-- **Scrum Master**: [Nombre del Scrum Master]
-- **Tech Lead**: [Nombre del líder técnico]
-- **Desarrolladores Full-Stack**: [Nombres del equipo]
-- **QA Tester**: [Nombre del tester]
+- **Product Owner**: Elias Yévenes
+- **Scrum Master**: Maestranzas Unidos 
+- **Desarrolladores Full-Stack**: Nicolás Maturana, Elias Yévenes, Catalina Marambio, José Miguel, Matias Vegas, Fabian Mallea
 
 ---
 
