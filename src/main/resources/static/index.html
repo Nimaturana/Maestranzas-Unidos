@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maestranzas Unidos S.A - Sistema de Control de Inventarios</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #2c3e50;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header Styles */
+    header {
+      background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="15" cy="15" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="35" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="45" cy="75" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+      animation: float 8s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Navigation */
+    nav {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 0;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #2c3e50;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #e74c3c;
+    }
+
+    /* Main Content */
+    .hero-section {
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .hero-description {
+      font-size: 1.1rem;
+      color: #666;
+      max-width: 900px;
+      margin: 0 auto 3rem;
+    }
+
+    /* Modules Section */
+    .modules-section {
+      background: white;
+      padding: 4rem 0;
+      margin: 2rem 0;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .modules-title {
+      font-size: 2rem;
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 3rem;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .module-card {
+      background: linear-gradient(135deg, #f8f9fb 0%, #ffffff 100%);
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+    }
+
+    .module-card:hover {
+      transform: translateY(-10px);
+      border-color: #e74c3c;
+      box-shadow: 0 15px 30px rgba(231, 76, 60, 0.2);
+    }
+
+    .module-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .module-card h3 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .module-card p {
+      color: #666;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    /* Requirements Section */
+    .requirements-section {
+      padding: 4rem 0;
+    }
+
+    .requirements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .requirement-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .requirement-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .requirement-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    /* Profiles Section */
+    .profiles-section {
+      background: white;
+      padding: 4rem 0;
+      margin: 3rem 0;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .profile-card {
+      background: linear-gradient(135deg, #f8f9fb 0%, #ffffff 100%);
+      padding: 2rem;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .profile-title {
+      color: #2c3e50;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .profile-list {
+      list-style: none;
+    }
+
+    .profile-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .profile-list li:before {
+      content: '⚡';
+      position: absolute;
+      left: 0;
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .profile-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Technology Stack */
+    .tech-section {
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .tech-item {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .tech-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .tech-logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Timeline Section */
+    .timeline-section {
+      background: white;
+      padding: 4rem 0;
+      margin: 3rem 0;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background: #e74c3c;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      background: inherit;
+      width: 50%;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: -10px;
+      background: white;
+      border: 4px solid #e74c3c;
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .timeline-item:nth-child(even) {
+      left: 50%;
+    }
+
+    .timeline-item:nth-child(even)::after {
+      left: -10px;
+    }
+
+    .timeline-content {
+      padding: 20px 30px;
+      background: #f8f9fb;
+      position: relative;
+      border-radius: 10px;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 3rem 0 1rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 1rem;
+      color: #e74c3c;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section ul li {
+      padding: 0.3rem 0;
+    }
+
+    .footer-section ul li a {
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-section ul li a:hover {
+      color: #e74c3c;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #444;
+      padding-top: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .logo {
+        font-size: 2rem;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline::after {
+        left: 31px;
+      }
+
+      .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+
+      .timeline-item::after {
+        left: 20px;
+      }
+
+      .timeline-item:nth-child(even) {
+        left: 0%;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Scroll to top button */
+    .scroll-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .scroll-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">⚙️ Maestranzas Unidos S.A</div>
+        <div class="subtitle">Sistema Integral de Control de Inventarios</div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">20+</span>
+            <span class="stat-label">Años</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">1000+</span>
+            <span class="stat-label">Componentes</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">6</span>
+            <span class="stat-label">Meses</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container">
+      <div class="nav-content">
+        <div style="font-weight: bold; color: #e74c3c;">Maestranzas Unidos</div>
+        <ul class="nav-links">
+          <li><a href="#modules">Módulos</a></li>
+          <li><a href="#requirements">Requerimientos</a></li>
+          <li><a href="#profiles">Perfiles</a></li>
+          <li><a href="#timeline">Cronograma</a></li>
+          <li><a href="#tech">Tecnología</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="hero-title">Transformación Digital Industrial</h1>
+        <p class="hero-description">
+          Maestranzas Unidos S.A., con más de dos décadas de experiencia en Copiapó, requiere un sistema 
+          de control de inventarios moderno y eficiente. Nuestro desafío es desarrollar una solución integral 
+          que optimice la gestión de miles de componentes y piezas especializadas para equipos pesados de construcción y minería.
+        </p>
+      </div>
+    </section>
+
+    <section id="modules" class="modules-section">
+      <div class="container">
+        <h2 class="modules-title">🔧 Módulos del Sistema</h2>
+        <div class="modules-grid">
+          <div class="module-card">
+            <div class="module-icon">📦</div>
+            <h3>Registro de Inventario</h3>
+            <p>Gestión completa de piezas y componentes con información detallada, números de serie y ubicaciones</p>
+            <a class="button" href="#" onclick="showDemo('inventario')">Explorar Módulo</a>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">📊</div>
+            <h3>Seguimiento de Movimientos</h3>
+            <p>Monitoreo en tiempo real de entradas, salidas, transferencias y uso en proyectos específicos</p>
+            <a class="button" href="#" onclick="showDemo('movimientos')">Explorar Módulo</a>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">🚨</div>
+            <h3>Alertas de Stock</h3>
+            <p>Notificaciones automáticas cuando los niveles alcanzan umbrales críticos para reposición oportuna</p>
+            <a class="button" href="#" onclick="showDemo('alertas')">Explorar Módulo</a>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">📋</div>
+            <h3>Gestión de Lotes</h3>
+            <p>Control preciso de lotes con fechas de vencimiento para lubricantes y materiales químicos</p>
+            <a class="button" href="#" onclick="showDemo('lotes')">Explorar Módulo</a>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">🏷️</div>
+            <h3>Categorización</h3>
+            <p>Sistema de etiquetas y categorías personalizables para facilitar búsqueda y clasificación</p>
+            <a class="button" href="#" onclick="showDemo('categorias')">Explorar Módulo</a>
+          </div>
+          <div class="module-card">
+            <div class="module-icon">📈</div>
+            <h3>Reportes e Informes</h3>
+            <p>Generación de informes personalizados sobre estado, niveles de stock y tendencias de consumo</p>
+            <a class="button" href="#" onclick="showDemo('reportes')">Explorar Módulo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="requirements" class="requirements-section">
+      <div class="container">
+        <h2 class="modules-title">📋 Requerimientos Clave</h2>
+        <div class="requirements-grid">
+          <div class="requirement-card">
+            <div class="requirement-icon">🔒</div>
+            <h3>Seguridad de Datos</h3>
+            <p>Protección y acceso autorizado a información crítica del inventario con garantía de integridad y confidencialidad.</p>
+          </div>
+          <div class="requirement-card">
+            <div class="requirement-icon">⚡</div>
+            <h3>Sistema Escalable</h3>
+            <p>Arquitectura que se adapta al crecimiento continuo del inventario y expansión de la maestranza.</p>
+          </div>
+          <div class="requirement-card">
+            <div class="requirement-icon">🎯</div>
+            <h3>Interfaz Intuitiva</h3>
+            <p>Diseño fácil de usar que requiere capacitación mínima para el personal de la maestranza.</p>
+          </div>
+          <div class="requirement-card">
+            <div class="requirement-icon">🔌</div>
+            <h3>Integración con Compras</h3>
+            <p>Automatización de órdenes de compra basadas en niveles actuales y necesidades previstas.</p>
+          </div>
+          <div class="requirement-card">
+            <div class="requirement-icon">🏪</div>
+            <h3>Gestión de Proveedores</h3>
+            <p>Base de datos completa con información de contacto, términos de pago e historial de precios.</p>
+          </div>
+          <div class="requirement-card">
+            <div class="requirement-icon">⚡</div>
+            <h3>Respaldo de Energía</h3>
+            <p>Mecanismo de respaldo que garantiza operación continua ante cortes de energía inesperados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="profiles" class="profiles-section">
+      <div class="container">
+        <h2 class="modules-title">👥 Perfiles del Sistema</h2>
+        <div class="profiles-grid">
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">🛡️</div>
+              <div class="profile-title">Administrador del Sistema</div>
+            </div>
+            <ul class="profile-list">
+              <li>Configuración y mantenimiento del sistema</li>
+              <li>Supervisión del funcionamiento general</li>
+              <li>Gestión de accesos y permisos</li>
+              <li>Respaldos y auditorías de seguridad</li>
+            </ul>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">📦</div>
+              <div class="profile-title">Gestor de Inventario</div>
+            </div>
+            <ul class="profile-list">
+              <li>Administración diaria del inventario</li>
+              <li>Recepción y actualización de materiales</li>
+              <li>Coordinación de aprovisionamiento</li>
+              <li>Control de niveles de stock</li>
+            </ul>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">🛒</div>
+              <div class="profile-title">Comprador</div>
+            </div>
+            <ul class="profile-list">
+              <li>Gestión de compras y proveedores</li>
+              <li>Creación de órdenes de compra</li>
+              <li>Negociación de contratos</li>
+              <li>Seguimiento de entregas</li>
+            </ul>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">🏭</div>
+              <div class="profile-title">Jefe de Producción</div>
+            </div>
+            <ul class="profile-list">
+              <li>Programación de producción</li>
+              <li>Coordinación de ensamblaje</li>
+              <li>Asignación de recursos del inventario</li>
+              <li>Control de materiales en proyectos</li>
+            </ul>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">📋</div>
+              <div class="profile-title">Auditor de Inventario</div>
+            </div>
+            <ul class="profile-list">
+              <li>Auditorías periódicas de inventario</li>
+              <li>Verificación de precisión de registros</li>
+              <li>Reportes de discrepancias</li>
+              <li>Control de calidad de datos</li>
+            </ul>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-header">
+              <div class="profile-avatar">👷</div>
+              <div class="profile-title">Trabajador de Planta</div>
+            </div>
+            <ul class="profile-list">
+              <li>Solicitud de materiales</li>
+              <li>Registro de uso en proyectos</li>
+              <li>Consulta de disponibilidad</li>
+              <li>Reporte de faltantes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="timeline" class="timeline-section">
+      <div class="container">
+        <h2 class="modules-title">📅 Cronograma del Proyecto - 6 Meses</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Mes 1-2: Levantamiento Funcional</h3>
+              <p>Identificación de historias de usuario, épicas y criterios de aceptación. Análisis profundo de procesos de negocio.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Mes 2: Priorización y Estimación</h3>
+              <p>Backlog priorizado con técnicas MoSCoW. Estimación de esfuerzo usando Planning Poker y definición del MVP.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Mes 3-4: Desarrollo Sprint 1-2</h3>
+              <p>Implementación de módulos core: registro de inventario, seguimiento básico y alertas de stock.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Mes 5: Desarrollo Sprint 3</h3>
+              <p>Integración con sistemas de compra, gestión de proveedores y reportes básicos.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>Mes 6: Testing y Despliegue</h3>
+              <p>Pruebas integrales, capacitación de usuarios y puesta en producción del MVP.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tech" class="tech-section">
+      <div class="container">
+        <h2 class="modules-title">🚀 Stack Tecnológico</h2>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <div class="tech-logo">☕</div>
+            <h3>Spring Boot</h3>
+            <p>Framework backend</p>
+          </div>
+          <div class="tech-item">
+            <div class="tech-logo">🗄️</div>
+            <h3>Oracle Database</h3>
+            <p>Base de datos empresarial</p>
+          </div>
+          <div class="tech-item">
+            <div class="tech-logo">🔄</div>
+            <h3>Hibernate</h3>
+            <p>ORM para persistencia</p>
+          </div>
+          <div class="tech-item">
+            <div class="tech-logo">🌐</div>
+            <h3>REST API</h3>
+            <p>Servicios web</p>
+          </div>
+          <div class="tech-item">
+            <div class="tech-logo">⚡</div>
+            <h3>Metodología Scrum</h3>
+            <p>Gestión ágil</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Contacto</h3>
+            <ul>
+              <li>📍 Copiapó, Chile</li>
+              <li>📧 en_desarrollo@maestranzasu.cl</li>
+              <li>📞 +56 9 9999 9999</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Ubicaciones</h3>
+            <ul>
+              <li><a href="#">Copiapó (Calle Atacama 898, casilla 371, Copiapó, Atacama)</a></li>
+            </ul>
+          </div>          
+        <div class="footer-bottom">
+          <p>Proyecto académico - Gestion agil de proyectos 003D</p>
+          <p>&copy; Maestranzas Unidos S.A | Desarrollado por Nicolás Maturana, Elias Yévenes, Catalina Marambio, José Miguel, Matias Vegas, Fabian Mallea </p>
+        </div>
+      </div>
+    </footer>
+    
