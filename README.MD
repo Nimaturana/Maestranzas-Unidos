@@ -186,7 +186,7 @@ Las pruebas de las APIs fueron realizadas con **Postman**, verificando:
 
 ## Equipo de Desarrollo
 
-- **Product Owner**: Elias Yévenes
+- **Product Owner**: José Miguel
 - **Scrum Master**: Maestranzas Unidos 
 - **Desarrolladores Full-Stack**: Nicolás Maturana, Elias Yévenes, Catalina Marambio, José Miguel, Matias Vegas, Fabian Mallea
 
