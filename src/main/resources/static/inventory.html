@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventario - Maestranzas Unidos</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #2c3e50;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #34495e, #2c3e50);
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .menu-icon {
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+
+    .current-screen {
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 20px;
+    }
+
+    .panel {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: none;
+    }
+
+    .panel:first-of-type {
+      display: block;
+    }
+
+    .panel h2 {
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .inventory-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .inventory-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      background: white;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      z-index: 999;
+      overflow: hidden;
+      width: 220px;
+    }
+
+    .dropdown-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .dropdown-menu li {
+      padding: 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-menu li:hover {
+      background: #f0f0f0;
+    }
+
+    .dropdown-menu li:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <div class="current-screen" id="screenLabel">Pantalla actual: Inventario</div>
+  </header>
+
+  <div class="dropdown-menu" id="dropdownMenu">
+    <ul>
+      <li onclick="cambiarPantalla('Inventario')">📋 Inventario</li>
+      <li onclick="cambiarPantalla('Agregar o Quitar')">➕ Agregar / Quitar Producto</li>
+      <li onclick="cambiarPantalla('Comprar')">🛒 Comprar</li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <!-- Panel 1: Inventario -->
+    <div class="panel" id="panelInventario">
+      <h2>📋 Lista de Inventario</h2>
+      <ul id="listaInventario" class="inventory-list"></ul>
+    </div>
+
+    <!-- Panel 2: Agregar Producto -->
+    <div class="panel" id="panelAgregar">
+      <h2>➕ Agregar Producto</h2>
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre">
+      </div>
+      <div class="form-group">
+        <label for="categoria">Categoría</label>
+        <input type="text" id="categoria">
+      </div>
+      <div class="form-group">
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad">
+      </div>
+      <button class="button" onclick="agregarProducto()">Agregar</button>
+    </div>
+
+    <!-- Panel 3: Comprar -->
+    <div class="panel" id="panelComprar">
+      <h2>🛒 Comprar Producto</h2>
+      <p>Funcionalidad futura...</p>
+      <button class="button" onclick="realizarCompra()">Comprar</button>
+    </div>
+  </div>
+
+  <script>
+    async function cargarInventario() {
+      try {
+        const res = await fetch('/api/inventario');
+        const inventario = await res.json();
+        const ul = document.getElementById('listaInventario');
+        ul.innerHTML = '';
+        inventario.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.nombre} - ${item.categoria} - Cantidad: ${item.cantidad} - Estado: ${item.estado}`;
+          ul.appendChild(li);
+        });
+      } catch (e) {
+        console.error('Error al cargar inventario', e);
+      }
+    }
+
+    async function agregarProducto() {
+      const nombre = document.getElementById("nombre").value;
+      const categoria = document.getElementById("categoria").value;
+      const cantidad = parseInt(document.getElementById("cantidad").value);
+
+      if (!nombre || !categoria || isNaN(cantidad)) {
+        alert("Completa todos los campos correctamente.");
+        return;
+      }
+
+      await fetch('/api/inventario', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nombre, categoria, cantidad })
+      });
+
+      document.getElementById("nombre").value = "";
+      document.getElementById("categoria").value = "";
+      document.getElementById("cantidad").value = "";
+
+      cambiarPantalla('Inventario');
+      cargarInventario();
+    }
+
+    function realizarCompra() {
+      alert("¡Compra realizada con éxito!");
+      cambiarPantalla("Inventario");
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById("dropdownMenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function cambiarPantalla(nombre) {
+      document.getElementById("screenLabel").innerText = `Pantalla actual: ${nombre}`;
+      document.getElementById("dropdownMenu").style.display = "none";
+
+      document.getElementById("panelInventario").style.display = nombre === 'Inventario' ? 'block' : 'none';
+      document.getElementById("panelAgregar").style.display = nombre === 'Agregar o Quitar' ? 'block' : 'none';
+      document.getElementById("panelComprar").style.display = nombre === 'Comprar' ? 'block' : 'none';
+    }
+
+    // Cargar inventario al inicio
+    cargarInventario();
+  </script>
+</body>
+</html>
