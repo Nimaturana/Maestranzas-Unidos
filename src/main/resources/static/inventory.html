@@ -66,6 +66,18 @@
     .inventory-list li {
       padding: 0.5rem 0;
       border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .inventory-list button {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 8px;
+      cursor: pointer;
     }
 
     .dropdown-menu {
@@ -101,6 +113,23 @@
     .dropdown-menu li:last-child {
       border-bottom: none;
     }
+
+    .notification {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .notification.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .notification.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
   </style>
 </head>
 <body>
@@ -118,13 +147,13 @@
   </div>
 
   <div class="container">
-    <!-- Panel 1: Inventario -->
+    <div id="notificacion" class="notification" style="display:none"></div>
+
     <div class="panel" id="panelInventario">
       <h2>📋 Lista de Inventario</h2>
       <ul id="listaInventario" class="inventory-list"></ul>
     </div>
 
-    <!-- Panel 2: Agregar Producto -->
     <div class="panel" id="panelAgregar">
       <h2>➕ Agregar Producto</h2>
       <div class="form-group">
@@ -133,7 +162,12 @@
       </div>
       <div class="form-group">
         <label for="categoria">Categoría</label>
-        <input type="text" id="categoria">
+        <select id="categoria">
+          <option value="Hidráulico">Hidráulico</option>
+          <option value="Eléctrico">Eléctrico</option>
+          <option value="Mecánico">Mecánico</option>
+          <option value="Repuesto">Repuesto</option>
+        </select>
       </div>
       <div class="form-group">
         <label for="cantidad">Cantidad</label>
@@ -142,7 +176,6 @@
       <button class="button" onclick="agregarProducto()">Agregar</button>
     </div>
 
-    <!-- Panel 3: Comprar -->
     <div class="panel" id="panelComprar">
       <h2>🛒 Comprar Producto</h2>
       <p>Funcionalidad futura...</p>
@@ -159,11 +192,11 @@
         ul.innerHTML = '';
         inventario.forEach(item => {
           const li = document.createElement('li');
-          li.textContent = `${item.nombre} - ${item.categoria} - Cantidad: ${item.cantidad} - Estado: ${item.estado}`;
+          li.innerHTML = `${item.nombre} - ${item.categoria} - Cantidad: ${item.cantidad} - Estado: ${item.estado} <button onclick="eliminarProducto(${item.id})">Eliminar</button>`;
           ul.appendChild(li);
         });
       } catch (e) {
-        console.error('Error al cargar inventario', e);
+        mostrarNotificacion('Error al cargar inventario', 'error');
       }
     }
 
@@ -173,7 +206,7 @@
       const cantidad = parseInt(document.getElementById("cantidad").value);
 
       if (!nombre || !categoria || isNaN(cantidad)) {
-        alert("Completa todos los campos correctamente.");
+        mostrarNotificacion("Completa todos los campos correctamente.", "error");
         return;
       }
 
@@ -186,15 +219,21 @@
       });
 
       document.getElementById("nombre").value = "";
-      document.getElementById("categoria").value = "";
       document.getElementById("cantidad").value = "";
 
+      mostrarNotificacion("Producto agregado exitosamente.", "success");
       cambiarPantalla('Inventario');
       cargarInventario();
     }
 
+    async function eliminarProducto(id) {
+      await fetch(`/api/inventario/${id}`, { method: 'DELETE' });
+      mostrarNotificacion("Producto eliminado.", "success");
+      cargarInventario();
+    }
+
     function realizarCompra() {
-      alert("¡Compra realizada con éxito!");
+      mostrarNotificacion("¡Compra realizada con éxito!", "success");
       cambiarPantalla("Inventario");
     }
 
@@ -212,7 +251,14 @@
       document.getElementById("panelComprar").style.display = nombre === 'Comprar' ? 'block' : 'none';
     }
 
-    // Cargar inventario al inicio
+    function mostrarNotificacion(mensaje, tipo) {
+      const noti = document.getElementById("notificacion");
+      noti.innerText = mensaje;
+      noti.className = `notification ${tipo}`;
+      noti.style.display = "block";
+      setTimeout(() => noti.style.display = "none", 3000);
+    }
+
     cargarInventario();
   </script>
 </body>
